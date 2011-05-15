@@ -1,21 +1,48 @@
 package com.mangst.gameoflife;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A class that is used to parse command-line arguments.
  * @author mangst
  */
 public class Arguments {
 	/**
-	 * The command-line arguments.
+	 * The command-line arguments and their values.
 	 */
-	private String args[];
+	private Map<String, String> args = new HashMap<String, String>();
 
 	/**
 	 * Constructs a new arguments object.
 	 * @param args the command line arguments
 	 */
 	public Arguments(String args[]) {
-		this.args = args;
+		for (String arg : args) {
+			//ignore arguments that doesn't start with "-" (or "--")
+			if (!arg.startsWith("-")) {
+				continue;
+			}
+
+			//remove dashes
+			arg = (arg.startsWith("--")) ? arg.substring(2) : arg.substring(1);
+
+			String key, value;
+			int equals = arg.indexOf('=');
+			if (equals >= 0) {
+				key = arg.substring(0, equals);
+				if (equals < arg.length() - 1) {
+					value = arg.substring(equals + 1);
+				} else {
+					value = "";
+				}
+			} else {
+				key = arg;
+				value = null;
+			}
+
+			this.args.put(key, value);
+		}
 	}
 
 	/**
@@ -26,8 +53,7 @@ public class Arguments {
 	 * @return true if the flag argument exists, false if not
 	 */
 	public boolean exists(String shortArg, String longArg) {
-		String value = find(shortArg, longArg);
-		return value != null;
+		return args.containsKey(shortArg) || args.containsKey(longArg);
 	}
 
 	/**
@@ -52,12 +78,15 @@ public class Arguments {
 	 * "bar" is returned for the argument "--foo=bar")
 	 */
 	public String value(String shortArg, String longArg, String defaultValue) {
-		String arg = find(shortArg, longArg);
-		if (arg == null) {
+		String value = args.get(shortArg);
+		if (value == null) {
+			value = args.get(longArg);
+		}
+
+		if (value == null) {
 			return defaultValue;
 		}
-		int equals = arg.indexOf('=');
-		return (equals >= 0 && equals < arg.length() - 1) ? arg.substring(equals + 1).trim() : "";
+		return value;
 	}
 
 	/**
@@ -86,8 +115,10 @@ public class Arguments {
 	public Integer valueInt(String shortArg, String longArg, Integer defaultValue) {
 		String value = value(shortArg, longArg);
 
-		if (value == null || value.isEmpty()) {
+		if (value == null) {
 			return defaultValue;
+		} else if (value.isEmpty()) {
+			return 0;
 		}
 		return Integer.valueOf(value);
 	}
@@ -118,29 +149,11 @@ public class Arguments {
 	public Double valueDouble(String shortArg, String longArg, Double defaultValue) {
 		String value = value(shortArg, longArg);
 
-		if (value == null || value.isEmpty()) {
+		if (value == null) {
 			return defaultValue;
+		} else if (value.isEmpty()) {
+			return 0.0;
 		}
 		return Double.valueOf(value);
-	}
-
-	/**
-	 * Finds the specified argument.
-	 * @param shortArg the short version of the argument (example: "h" for "-h")
-	 * @param longArg the long version of the argument (example: "help" for
-	 * "--help")
-	 * @return the entire argument (example: "--foo=bar")
-	 */
-	private String find(String shortArg, String longArg) {
-		//prepend the hypens
-		if (shortArg != null) shortArg = "-" + shortArg;
-		if (longArg != null) longArg = "--" + longArg;
-
-		for (String arg : args) {
-			if ((shortArg != null && arg.matches(shortArg + "(=.*)?")) || (longArg != null && arg.matches(longArg + "(=.*)?"))) {
-				return arg;
-			}
-		}
-		return null;
 	}
 }
