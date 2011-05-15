@@ -76,9 +76,9 @@ public class GameOfLife {
 		if (cols == null) {
 			argErrors.add("Number of columns is required (example: \"--cols=50\").");
 		}
-		
-		if (!argErrors.isEmpty()){
-			for (String error : argErrors){
+
+		if (!argErrors.isEmpty()) {
+			for (String error : argErrors) {
 				System.err.println(error);
 			}
 			System.exit(1);
@@ -311,11 +311,29 @@ public class GameOfLife {
 		}
 
 		//add noise (toggle random cells)
-		for (int i = 0; i < noise; i++) {
-			int row = (int) (Math.random() * current.getRows());
-			int col = (int) (Math.random() * current.getCols());
-			boolean alive = next.isAlive(row, col);
-			next.setAlive(row, col, !alive);
+		if (noise > 0) {
+			int changed[][] = new int[noise][2];
+			for (int i = 0; i < noise; i++) {
+				//find a random cell (that hasn't already been chosen this iteration)
+				boolean repeat;
+				int row, col;
+				do {
+					repeat = false;
+					row = (int) (Math.random() * current.getRows());
+					col = (int) (Math.random() * current.getCols());
+					for (int j = 0; j < i; j++){
+						if (changed[j][0] == row && changed[j][1] == col){
+							repeat = true;
+							break;
+						}
+					}
+				} while (repeat);
+				
+				boolean alive = next.isAlive(row, col);
+				next.setAlive(row, col, !alive);
+				changed[i][0] = row;
+				changed[i][1] = col;
+			}
 		}
 
 		//swap grids
