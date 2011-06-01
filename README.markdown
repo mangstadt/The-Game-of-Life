@@ -2,7 +2,7 @@
 
 A concurrent, Java implementation of The Game of Life.  Run it from the command line:
 
-    java com.mangst.gameoflife.GameOfLife --rows=30 --cols=40
+    java -jar gameoflife.jar --rows=30 --cols=40
     
 # Command line arguments
 
@@ -41,3 +41,16 @@ A concurrent, Java implementation of The Game of Life.  Run it from the command 
     -h, --help
        Displays this help message.
 
+# Opening in Eclipse
+
+To generate the necessary files needed to open the project in Eclipse, navigate to the project root and run the following Maven command:
+
+    mvn eclipse:eclipse
+
+# How to build
+
+To build the project, navigate to the project root and run the following Maven command:
+
+    mvn clean compile assembly:single
+    
+This will generate a runnable JAR file that contains all dependencies.

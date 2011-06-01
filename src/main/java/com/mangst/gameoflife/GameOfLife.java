@@ -24,8 +24,8 @@ public class GameOfLife {
 			System.out.println("The Game of Life");
 			System.out.println("by Michael Angstadt");
 			System.out.println();
-			System.out.println("usage:    java -jar GameOfLife.jar <arguments>");
-			System.out.println("example:  java -jar GameOfLife.jar --rows=30 --cols=30");
+			System.out.println("usage:    java -jar gameoflife.jar <arguments>");
+			System.out.println("example:  java -jar gameoflife.jar --rows=30 --cols=30");
 			System.out.println();
 			System.out.println("Arguments");
 			System.out.println("-r=N, --rows=N (required)");
