@@ -10,17 +10,20 @@ import org.junit.Test;
 public class ArgumentsTest {
 	@Test
 	public void testExists() {
-		Arguments args = new Arguments(new String[] { "--first=George", "-l=Washington", "--president", "-m"  });
-		Assert.assertFalse(args.exists("a", "arg"));
+		Arguments args = new Arguments(new String[] { "--first=George", "-l=Washington", "--president", "-m" , "-abc" });
+		Assert.assertFalse(args.exists("d", "doesNotExist"));
 		Assert.assertTrue(args.exists("f", "first"));
 		Assert.assertTrue(args.exists("l", "last"));
 		Assert.assertTrue(args.exists("m", "male"));
 		Assert.assertTrue(args.exists("p", "president"));
+		Assert.assertTrue(args.exists("a", "aGroup"));
+		Assert.assertTrue(args.exists("b", "bGroup"));
+		Assert.assertTrue(args.exists("c", "cGroup"));
 	}
 
 	@Test
 	public void testValue() {
-		Arguments args = new Arguments(new String[] { "--first=George", "-l=Washington", "-e=", "-n" });
+		Arguments args = new Arguments(new String[] { "--first=George", "-l=Washington", "-e=", "-n", "-abc=value" });
 		String actual, expected;
 
 		//long arg with value
@@ -52,16 +55,25 @@ public class ArgumentsTest {
 		actual = args.value("n", "novalue");
 		expected = null;
 		Assert.assertEquals(expected, actual);
+		
+		//grouped flags with a value
+		expected = "value";
+		actual = args.value("a", "aGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.value("b", "bGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.value("c", "cGroup");
+		Assert.assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testValueInt() {
-		Arguments args = new Arguments(new String[] { "--address=1300", "-m=05", "-e=", "-n" });
+		Arguments args = new Arguments(new String[] { "--port=80", "-m=05", "-e=", "-n", "-abc=123" });
 		Integer actual, expected;
 
 		//long arg with value
-		actual = args.valueInt("a", "address", 11);
-		expected = 1300;
+		actual = args.valueInt("p", "port", 11);
+		expected = 80;
 		Assert.assertEquals(expected, actual);
 
 		//short arg with value
@@ -88,15 +100,24 @@ public class ArgumentsTest {
 		actual = args.valueInt("n", "novalue");
 		expected = null;
 		Assert.assertEquals(expected, actual);
+		
+		//grouped flags with a value
+		expected = 123;
+		actual = args.valueInt("a", "aGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.valueInt("b", "bGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.valueInt("c", "cGroup");
+		Assert.assertEquals(expected, actual);
 	}
 
 	@Test
 	public void testValueDouble() {
-		Arguments args = new Arguments(new String[] { "--cost=24.99", "-m=32.5", "-e=", "-n" });
+		Arguments args = new Arguments(new String[] { "--total=24.99", "-m=32.5", "-e=", "-n", "-abc=123.456" });
 		Double actual, expected;
 
 		//long arg with value
-		actual = args.valueDouble("c", "cost", 12.99);
+		actual = args.valueDouble("t", "total", 12.99);
 		expected = 24.99;
 		Assert.assertEquals(expected, actual);
 
@@ -123,6 +144,15 @@ public class ArgumentsTest {
 		//no value
 		actual = args.valueDouble("n", "novalue");
 		expected = null;
+		Assert.assertEquals(expected, actual);
+		
+		//grouped flags with a value
+		expected = 123.456;
+		actual = args.valueDouble("a", "aGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.valueDouble("b", "bGroup");
+		Assert.assertEquals(expected, actual);
+		actual = args.valueDouble("c", "cGroup");
 		Assert.assertEquals(expected, actual);
 	}
 }

@@ -23,10 +23,18 @@ public class Arguments {
 			if (!arg.startsWith("-")) {
 				continue;
 			}
-
+			
 			//remove dashes
-			arg = (arg.startsWith("--")) ? arg.substring(2) : arg.substring(1);
+			boolean longArg;
+			if (arg.startsWith("--")){
+				longArg = true;
+				arg = arg.substring(2);
+			} else {
+				longArg = false;
+				arg = arg.substring(1);
+			}
 
+			//get key and value
 			String key, value;
 			int equals = arg.indexOf('=');
 			if (equals >= 0) {
@@ -40,8 +48,15 @@ public class Arguments {
 				key = arg;
 				value = null;
 			}
-
-			this.args.put(key, value);
+			
+			if (longArg){
+				this.args.put(key, value);
+			} else {
+				//flags can be grouped (example: "-abc" is the same as "-a -b -c")
+				for (int i = 0; i < key.length(); i++){
+					this.args.put(key.charAt(i) + "", value);
+				}
+			}
 		}
 	}
 
