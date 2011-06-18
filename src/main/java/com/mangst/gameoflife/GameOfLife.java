@@ -22,7 +22,7 @@ public class GameOfLife {
 		//display help message
 		if (arguments.exists("h", "help")) {
 			System.out.println("The Game of Life");
-			System.out.println("by Michael Angstadt");
+			System.out.println("by Michael Angstadt [github.com/mangstadt]");
 			System.out.println();
 			System.out.println("usage:    java -jar gameoflife.jar <arguments>");
 			System.out.println("example:  java -jar gameoflife.jar --rows=30 --cols=30");
